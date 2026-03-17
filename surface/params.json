@@ -1,0 +1,16 @@
+{
+  "miu_C": -7.50,
+  "energy_C": -147.212007,
+
+  "model": "Your/model/file",
+  "init_stru": "./POSCAR",
+  "max_iterations": 500,
+  "temperature":   1000,
+  
+  "prob_mig_C":    0.30, 
+  "prob_add_C":    0.25, 
+  "prob_rmv_C":    0.25,
+
+  "prob_rtt":      0.10,
+  "prob_sld" :     0.10
+}
