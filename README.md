@@ -61,4 +61,8 @@ Upon completion, the simulation generates the following output files:
 If you prefer not to run the VLMC simulations, you can also view the example trajectories in `./traj-examples`. This directory contains four representative trajectories in `.xyz` format with accepted structures from previous VLMC simulations.
 
 ## References:
+If you find the VLMC scheme or FT<sup>2</sup>DP model helpful for your work, we would appreciate a citation to the following papers:
+
 [1] Liu, Z.-Q.; Deng, Z.; Zhao, H.; Wang, H.; Chen, M.; Jiang, H. FT<sup>2</sup>DP: Large Atomic Model Fine-Tuned Machine Learning Potential for Accelerating Atomistic Simulation of Iron-Based Fischer-Tropsch Synthesis. Journal of Materials Informatics. 2025, 5 (2). https://doi.org/10.20517/jmi.2024.105.
+
+[2] Deng, Z; Liu, Z.; Jiang, H. Variable Lattice Monte Carlo: A Voronoi Tessellation-Guided Structural Exploration Framework and Applications in Iron Carbides. The Journal of Physical Chemistry Letters. ASAP. https://doi.org/10.1021/acs.jpclett.6c00382.
