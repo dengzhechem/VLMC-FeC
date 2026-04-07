@@ -4,9 +4,6 @@ from ase.io import write
 import matplotlib.pyplot as plt
 
 def db_analyse_varC(energy_C, miu_C):
-    energy_C = energy_C   # eV
-    miu_C = miu_C
-
     idx_list = []
     corr_energy_list = []
     C_Fe_ratio_list = []
@@ -30,7 +27,7 @@ def db_analyse_varC(energy_C, miu_C):
 
     fig, ax1 = plt.subplots()
     ax1.set_xlabel('Accepted Structure Index')
-    ax1.set_ylabel('DPA-2 Relative Energy (eV)')
+    ax1.set_ylabel('Relative Energy (eV)')
     ax1.plot(idx_list, rel_energy_list, linewidth=1.0, color='Red', label='Energy')
     lines, labels = ax1.get_legend_handles_labels()
 
