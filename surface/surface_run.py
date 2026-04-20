@@ -70,7 +70,8 @@ def subsurface_carbon_check(cur_stru, surface_fe_indices, threshold=2.4):
     return False
 
 def run_MC(init_stru):
-    init_stru.calc = DP(model=model)
+    dp_calc = DP(model=model)
+    init_stru.calc = dp_calc
     init_stru_relax = BFGS(init_stru)
     init_stru_relax.run(fmax=0.05)
     print("DPA-2| Done relaxing  IS" + f", the energy is: {init_stru.get_potential_energy():.4f} eV")
@@ -118,7 +119,7 @@ def run_MC(init_stru):
         cur_stru = temp_stru.copy()
         db_all.write(cur_stru, relaxed=False)
             
-        cur_stru.calc = DP(model=model)
+        cur_stru.calc = dp_calc
         local_relax = BFGS(cur_stru, maxstep=1.2)
         local_relax.run(fmax=0.05, steps=300)
         db_all.write(cur_stru, relaxed=True)

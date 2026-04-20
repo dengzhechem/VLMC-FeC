@@ -51,7 +51,8 @@ def SOAP_check(cur_stru, last_stru, threshold=0.20):
     return True
 
 def run_MC(init_stru):
-    init_stru.calc = DP(model=model)
+    dp_calc = DP(model=model)
+    init_stru.calc = dp_calc
     ecf_init = FrechetCellFilter(init_stru)
     init_stru_relax = BFGS(ecf_init)
     init_stru_relax.run(fmax=0.05)
@@ -101,7 +102,7 @@ def run_MC(init_stru):
         cur_stru = temp_stru.copy()
         db_all.write(cur_stru, relaxed=False)
             
-        cur_stru.calc = DP(model=model)
+        cur_stru.calc = dp_calc
         ecf_cur = FrechetCellFilter(cur_stru)
         local_relax = BFGS(ecf_cur, maxstep=1.2)
         local_relax.run(fmax=0.05, steps=300)
