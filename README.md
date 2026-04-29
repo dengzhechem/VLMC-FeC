@@ -7,7 +7,7 @@ A Voronoi tessellation-guided structural exploration framework, currently specif
 Each module provides some examples in terms of iron carbides.
 
 ## Dependencies:
-- [ASE](https://wiki.fysik.dtu.dk/ase/about.html): system initialization, local relaxation and neighboring atom detection.
+- [ASE](https://ase-lib.org/): system initialization, local relaxation and neighboring atom detection.
 - [SciPy](https://scipy.org/): implements Voronoi tessellation and clustering algorithms.
 - [DScribe](https://singroup.github.io/dscribe): implements the SOAP descriptor.
 - [DeePMD-kit](https://github.com/deepmodeling/deepmd-kit): integrates the machine learning potential. Users may substitute their own methods by changing the ASE calculator. However, due to computational costs, DFT methods are not recommended except for small systems.
