@@ -1,4 +1,4 @@
-# Zhe Deng in 2025-11-13
+# Zhe Deng in 2026-06-09
 # Functions and parameters about running variable lattice Monte-Carlo (nanoparticle case)
 
 import random
@@ -13,6 +13,8 @@ from read_params import read_params
 from vlmc_nano import VLMC_nano
 from post_process import db_analyse_varC, write_cifs
 
+GLOBAL_SOAP = SOAP(species=['Fe', 'C'], r_cut=4.0, n_max=3, l_max=3, periodic=True, sparse=False)
+
 def SOAP_check(cur_stru, last_stru, threshold=0.20):
     natoms_cur_stru = len(cur_stru)
     natoms_last_stru = len(last_stru)
@@ -21,9 +23,8 @@ def SOAP_check(cur_stru, last_stru, threshold=0.20):
         return False
 
     # SOAP-based fingerprint check to detect identical structure
-    soap = SOAP(species=['Fe', 'C'], r_cut=4.0, n_max=3, l_max=3, periodic=True, sparse=False)
-    cur_soap_vectors = soap.create(cur_stru)
-    last_soap_vectors = soap.create(last_stru)
+    cur_soap_vectors = GLOBAL_SOAP.create(cur_stru)
+    last_soap_vectors = GLOBAL_SOAP.create(last_stru)
     cur_descriptors = cur_soap_vectors.mean(axis=1)
     last_descriptors = last_soap_vectors.mean(axis=1)
 
@@ -54,7 +55,7 @@ def run_MC(init_stru):
     init_stru.calc = dp_calc
     init_stru_relax = BFGS(init_stru)
     init_stru_relax.run(fmax=0.05)
-    print("DPA-2| Done relaxing  IS" + f", the energy is: {init_stru.get_potential_energy():.4f} eV")
+    print("DPA-2| Done relaxing IS" + f", the energy is: {init_stru.get_potential_energy():.4f} eV")
     print(f"The given chemical potential of carbon is {miu_C:.2f} eV, with temperature = {temperature} K")
     print("======================================================================")
 
@@ -65,6 +66,11 @@ def run_MC(init_stru):
 
     cur_stru = init_stru.copy()
     analyzer = VLMC_nano(cur_stru)
+
+    last_stru = init_stru.copy()
+    last_energy = init_stru.get_potential_energy()
+    last_C_num = sum(1 for atom in last_stru if atom.symbol == 'C')
+    accepted_count = 0
 
     prob_total = sum(prob for prob in prob_list)
     operations = [
@@ -107,12 +113,6 @@ def run_MC(init_stru):
         cur_C_num = sum(1 for atom in cur_stru if atom.symbol == 'C')
         print(f"DPA-2| Done relaxing stru {step+1}, the energy is: {cur_energy:.4f} eV")
 
-        rows = list(db.select(sort='id'))
-        last_row = rows[-1]
-        last_stru = db.get_atoms(id=last_row.id)
-        last_energy = last_stru.get_potential_energy()
-        last_C_num = sum(1 for atom in last_stru if atom.symbol == 'C')
-
         # E_corr = E_tot - N_C * miu_C
         cur_corr_energy = cur_energy - cur_C_num * (energy_C + miu_C)
         last_corr_energy = last_energy - last_C_num * (energy_C + miu_C)
@@ -123,9 +123,14 @@ def run_MC(init_stru):
         if(is_identical):
             print("This structure is identical to the last accepted one, discard it")
         elif(random.random() < np.exp((last_corr_energy - cur_corr_energy) / (temperature * 8.617E-5))):
-            print(f"This structure has been accepted with index {len(db)}")
+            accepted_count += 1
+            print(f"This structure has been accepted with index {accepted_count}")
             analyzer.update_stru(cur_stru)
             db.write(cur_stru, relaxed=True)
+            # Update last structure and related properties
+            last_stru = cur_stru.copy()
+            last_energy = cur_energy
+            last_C_num = cur_C_num
         else:
             print("This structure has been rejected")
             
