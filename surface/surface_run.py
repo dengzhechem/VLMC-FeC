@@ -1,4 +1,4 @@
-# Zhe Deng in 2026-06-09
+# Zhe Deng in 2026-06-25
 # Functions and parameters about running variable lattice Monte-Carlo (surface-only case)
 
 import random
@@ -138,15 +138,21 @@ def run_MC(init_stru):
         cur_corr_energy = cur_energy - cur_C_num * (energy_C + miu_C)
         last_corr_energy = last_energy - last_C_num * (energy_C + miu_C)
         print(f"The corrected energy of cur_stru is {cur_corr_energy:.4f} eV, last_stru is {last_corr_energy:.4f} eV")
+        energy_diff = last_corr_energy - cur_corr_energy
         
         # Discard identical structure or untargeted structure with subsurface carbon atoms
-        is_identical = SOAP_check(cur_stru, last_stru)
+        if abs(energy_diff) > 0.25:
+            is_identical = False
+        else:
+            is_identical = SOAP_check(cur_stru, last_stru)
+            
         with_subsurface_c = subsurface_carbon_check(cur_stru, analyzer.surface_fe_indices)
+
         if(is_identical):
             print("This structure is identical to the last accepted one, discard it")
         elif(with_subsurface_c):
             print("This structure contains subsurface carbon atom(s), discard it")
-        elif(random.random() < np.exp((last_corr_energy - cur_corr_energy) / (temperature * 8.617E-5))):
+        elif(random.random() < np.exp(energy_diff / (temperature * 8.617E-5))):
             accepted_count += 1
             print(f"This structure has been accepted with index {accepted_count}")
             analyzer.update_stru(cur_stru)
