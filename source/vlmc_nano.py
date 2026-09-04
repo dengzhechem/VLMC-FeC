@@ -177,7 +177,12 @@ class VLMC_nano:
         coord_nums, c_counts, c_indices = self.get_vacancies_environment(vacancies_pos, False)
         Vacancy_tuple = namedtuple("Vacancy", ["position", "coord_num", "c_count", "c_indice"])
         vacancy_data = [Vacancy_tuple(pos, cn, cc, ci) for pos, cn, cc, ci in zip(vacancies_pos, coord_nums, c_counts, c_indices)]
-        bulk_vacancies = [v for v in vacancy_data if v.coord_num >= 5]
+
+        inv_cell = np.linalg.inv(self.stru.cell)
+        bulk_vacancies = [
+            v for v in vacancy_data 
+            if v.coord_num >= 5 and np.all((np.dot(v.position, inv_cell) >= 0.0) & (np.dot(v.position, inv_cell) <= 1.0))
+        ]
 
         return bulk_vacancies
     
